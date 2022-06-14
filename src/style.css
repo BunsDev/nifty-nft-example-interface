@@ -1,0 +1,20 @@
+header {
+    background-color: #fff;
+    padding: 10px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+.item {
+    width: 250px;
+    height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.item button {
+    margin-top: auto;
+}
