@@ -1,0 +1,28 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+    },
+    "globals": {
+        "React": "writable"
+    },
+    "ecmaFeatures": {
+        "jsx": true,
+        "modules": true,
+        "experimentalObjectRestSpread": true
+    },
+    "extends": ["airbnb"],
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        "key-spacing": [2, {
+            "align": "colon"
+        }],
+        "linebreak-style": "off",
+        "react/jsx-props-no-spreading": "off"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020
+    }
+    
+}

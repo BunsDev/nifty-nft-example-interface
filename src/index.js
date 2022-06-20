@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { Web3Provider } from "./web3";
+import { Web3Provider } from './web3';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -9,5 +9,5 @@ root.render(
     <Web3Provider>
       <App />
     </Web3Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

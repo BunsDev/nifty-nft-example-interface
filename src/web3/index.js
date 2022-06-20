@@ -1,22 +1,24 @@
-import { createContext, useCallback, useReducer, useEffect } from "react";
+import {
+  createContext, useCallback, useReducer, useEffect,
+} from 'react';
 import Web3 from 'web3';
-import Web3Modal from "web3modal";
+import Web3Modal from 'web3modal';
 
-import { Web3Reducer } from "./reducer";
+import { Web3Reducer } from './reducer';
 
 const initialState = {
-  loading: false,
-  wallet: null,
+  loading : false,
+  wallet  : null,
   provider: null,
-  web3: null,
+  web3    : null,
 };
 
 const providerOptions = {
-  cacheProvider  : true, // optional
+  cacheProvider: true, // optional
 };
 
 const web3Modal = new Web3Modal({
-  providerOptions: providerOptions,
+  providerOptions,
 });
 
 export const Web3Context = createContext(initialState);
@@ -26,21 +28,21 @@ export const Web3Provider = ({ children }) => {
 
   const setWallet = (wallet) => {
     dispatch({
-      type: "SET_WALLET",
+      type   : 'SET_WALLET',
       payload: wallet,
     });
   };
 
   const setProvider = (provider) => {
     dispatch({
-      type: "SET_PROVIDER",
+      type   : 'SET_PROVIDER',
       payload: provider,
     });
   };
 
   const setWeb3 = (web3) => {
     dispatch({
-      type: "SET_WEB3",
+      type   : 'SET_WEB3',
       payload: web3,
     });
   };
@@ -60,7 +62,7 @@ export const Web3Provider = ({ children }) => {
 
   const initWeb3 = (provider) => {
     const web3 = new Web3(provider);
-  
+
     web3.eth.extend({
       methods: [
         {
@@ -70,7 +72,7 @@ export const Web3Provider = ({ children }) => {
         },
       ],
     });
-  
+
     return web3;
   };
 
@@ -88,8 +90,8 @@ export const Web3Provider = ({ children }) => {
       } else {
         const address = accounts[0].toLowerCase();
         const balance = await web3.eth.getBalance(address);
-  
-        setWallet({ ...wallet, address, balance })
+
+        setWallet({ ...wallet, address, balance });
       }
     });
     provider.on('chainChanged', async (chainId) => {
@@ -128,11 +130,10 @@ export const Web3Provider = ({ children }) => {
       setWallet(data);
 
       subscribeProvider(data, web3Modal, web3, provider);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-      return;
     }
-  }
+  };
 
   useEffect(() => {
     if (web3Modal.cachedProvider) {
