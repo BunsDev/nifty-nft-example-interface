@@ -1,7 +1,7 @@
 import {
   useParams,
 } from 'react-router-dom';
-import Nifty from 'nftdao-sdk';
+import Nifty from 'nifty-protocol';
 import { useContext, useEffect, useState } from 'react';
 import Token from './Token';
 import { Web3Context } from '../web3';

@@ -2,7 +2,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
-import nftdaoSDK from 'nftdao-sdk';
+import Nifty from 'nifty-protocol';
 import Token from './Token';
 import { Web3Context } from '../web3';
 
@@ -40,7 +40,7 @@ const Collection = () => {
       options.search = searchFilter;
     }
 
-    nftdao = nftdaoSDK({ marketplaceId: 'etoro' });
+    nftdao = Nifty({ marketplaceId: 'etoro' });
 
     nftdao.api.tokens.getAll(options).then((res) => {
       setTokens(res.data);

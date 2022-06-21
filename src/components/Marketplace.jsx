@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import Nifty from 'nftdao-sdk';
+import Nifty from 'nifty-protocol';
+import { useParams } from 'react-router-dom';
 import { Web3Context } from '../web3';
 import Token from './Token';
 
 const shortenAddress = (address) => address && `${address.substring(0, 5)}...${address.substring(address.length - 4, address.length)}`;
-
 let nifty;
 
 const chains = [
@@ -31,13 +31,27 @@ const Marketplace = () => {
   const [chainFilter, setChainFilter] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
   const [sort, setSort] = useState('listed_desc');
+
   const {
-    wallet, web3, provider, connectWeb3, logout,
+    contractAddress,
+    chainId,
+    userAddress,
+  } = useParams();
+
+  const {
+    wallet,
+    web3,
+    provider,
+    connectWeb3,
+    logout,
   } = useContext(Web3Context);
 
   useEffect(() => {
     const options = {
       sort,
+      contractAddress,
+      connectedChainId: chainId,
+      address         : userAddress,
     };
 
     if (sort) {
@@ -52,25 +66,23 @@ const Marketplace = () => {
 
     nifty = new Nifty({ marketplace: 'test' });
 
-    nifty.getNFTs(options).then((res) => {
-      setTokens(res.data);
-    })
+    nifty.getNFTs(options).then((res) => { setTokens(res.data); })
       .catch((e) => {
         console.log('e', e);
       });
   }, [searchFilter, chainFilter, sort]);
 
-  const sell = async (token) => {
-    nifty.initWallet(web3, 'EVM');
+  const list = async (token, price) => {
+    nifty.initWallet(web3, Nifty.evmTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );
-    await nifty.sell(token, '0.01');
+    await nifty.list(token, '0.01');
   };
 
   const buy = (orderId) => {
     nifty.getListing(orderId).then(async (res) => {
-      nifty.initWallet(web3, 'EVM');
+      nifty.initWallet(web3, Nifty.evmTypes.EVM);
       nifty.setStatusListener(
         (status) => console.log(status),
       );
@@ -82,29 +94,59 @@ const Marketplace = () => {
     <div>
       <header>
         {!wallet ? (
-          <button onClick={connectWeb3}>
+          <button type="button" onClick={connectWeb3}>
             Connect to MetaMask
           </button>
         ) : shortenAddress(wallet.address)}
       </header>
-      <div>
-        <div>
-          <form name="marketplace" id="marketplace">
 
-            <select id="chains" name="chainList" form="marketplace" onChange={(e) => setChainFilter(e.target.value)}>
+      <div>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <form name="marketplace" id="marketplace">
+            <select
+              id="chains"
+              name="chainList"
+              form="marketplace"
+              onChange={(e) => setChainFilter(e.target.value)}
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            >
               {chains.map((chain) => (
                 <option key={chain.chainId} value={chain.chainId}>{chain.name}</option>
               ))}
             </select>
 
-            <select id="sort" name="sort options" form="marketplace" onChange={(e) => setSort(e.target.value)}>
+            <select
+              id="sort"
+              name="sort options"
+              form="marketplace"
+              onChange={(e) => setSort(e.target.value)}
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
 
-            <input onChange={(e) => setSearchFilter(e.target.value)} />
+            <input
+              onChange={(e) => setSearchFilter(e.target.value)}
+              placeholder="Search"
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
           </form>
+
+          {contractAddress && (
+            <>
+              <p>Contact Address: </p>
+              <p>{contractAddress}</p>
+            </>
+          )}
+
+          {userAddress && (
+            <>
+              <p>User Address :</p>
+              <p>{userAddress}</p>
+            </>
+          )}
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -112,12 +154,12 @@ const Marketplace = () => {
             <Token
               {...token}
               onBuy={() => buy(token.orderId)}
-              onSell={() => sell(token)}
+              onList={() => list(token)}
             />
           ))}
         </div>
-
       </div>
+
     </div>
   );
 };

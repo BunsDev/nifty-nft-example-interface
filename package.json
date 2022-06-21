@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "nftdao-sdk": "file:../nftdao-sdk",
+    "nifty-protocol": "file:../nifty-protocol",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router-dom": "^5.3.3",

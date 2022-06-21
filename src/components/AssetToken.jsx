@@ -2,11 +2,12 @@ import {
   Link,
   useParams,
 } from 'react-router-dom';
-import nftdaoSDK from 'nftdao-sdk';
+import Nifty from 'nifty-protocol';
+
 import { useContext, useEffect, useState } from 'react';
 import { Web3Context } from '../web3';
 
-let nftdao;
+let nifty;
 
 const AssetToken = () => {
   const { contractAddress, chainId, tokenID } = useParams();
@@ -15,40 +16,19 @@ const AssetToken = () => {
   const { web3 } = useContext(Web3Context);
 
   useEffect(() => {
-    nftdao = nftdaoSDK({ marketplaceId: 'etoro' });
-    nftdao.api.tokens.get(contractAddress, tokenID, { chainId }).then((res) => {
+    nifty = new Nifty({ marketplace: 'test' });
+    nifty.getNFT(contractAddress, tokenID, chainId).then((res) => {
       setToken(res.data);
     });
   }, []);
 
-  useEffect(() => {
-    if (token) {
-      nftdao.setWeb3(web3, 'EVM').then(() => {
-        nftdao.transactions.canList(token.contract.address, token.tokenID, token.contractType).then((res) => {
-          setCanList(res);
-        }).catch((e) => {
-          console.log('e', e);
-        });
-      }).catch((e) => {
-        console.log('e', e);
-      });
-    }
-  }, [web3, token]);
-
   const buy = (orderId) => {
-    nftdao.api.orders.get(orderId).then(async (res) => {
-      nftdao.setWeb3(web3, 'EVM').then(async () => {
-        await nftdao.transactions.buy(res.data).then((tx) => {
-          console.log('Bought!');
-        })
-          .catch((e) => { console.log(e.message); });
-      })
-        .catch((e) => {
-          console.log('e', e);
-        });
-      nftdao.transactions.setStatusListener(
+    nifty.getListing(orderId).then(async (res) => {
+      nifty.initWallet(web3, Nifty.evmTypes.EVM);
+      nifty.setStatusListener(
         (status) => console.log(status),
       );
+      await nifty.buy(res.data);
     });
   };
 
@@ -56,8 +36,12 @@ const AssetToken = () => {
     console.log('offer');
   };
 
-  const list = () => {
-    console.log('list');
+  const list = async (token, price) => {
+    nifty.initWallet(web3, Nifty.evmTypes.EVM);
+    nifty.setStatusListener(
+      (status) => console.log(status),
+    );
+    await nifty.list(token, '0.01');
   };
 
   return (
@@ -97,7 +81,7 @@ const AssetToken = () => {
                         {attribute.value}
                       </div>
                     ))
-}
+                }
                 </>
               )}
             </div>
