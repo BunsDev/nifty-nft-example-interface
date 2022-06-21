@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
-import nftdaoSDK from 'nftdao-sdk';
+import Nifty from 'nftdao-sdk';
 
 let nftdao;
 
 const Token = ({
-  contract, name, thumb, price, chainId, onBuy, tokenID,
+  contract, name, thumb, price, chainId, onBuy, tokenID, onSell,
 }) => {
-  nftdao = nftdaoSDK({ marketplaceId: 'etoro' });
-  const chain = chainId && nftdao.findChain(chainId);
-
+  const chain = Nifty.utils.findChainById(chainId);
   return (
     <div
       className="item"
@@ -42,6 +40,10 @@ const Token = ({
         <p>{price}</p>
         <p>{chain.name}</p>
       </Link>
+      <div>
+        <button type="button" onClick={onBuy}>Buy</button>
+        <button type="button" onClick={onSell}>List</button>
+      </div>
     </div>
   );
 };

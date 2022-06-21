@@ -1734,7 +1734,7 @@
   dependencies:
     buffer "~6.0.3"
 
-"@solana/web3.js@^1.44.0":
+"@solana/web3.js@^1.44.1":
   version "1.44.1"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.44.1.tgz#98bc2c07d5281087b332dd925e2d6723228d68b8"
   integrity sha512-s9nJdNAfmQKvn7K+pGcDZyJXhVN0Dy4yX0DzO+8yHSju1dF/RGJCR5TAUaAb3sZJgM+zxgyPu/P16Ji5HkdNOQ==
@@ -8494,7 +8494,7 @@ next-tick@^1.1.0:
 "nftdao-sdk@file:../nftdao-sdk":
   version "1.0.0"
   dependencies:
-    "@solana/web3.js" "^1.44.0"
+    "@solana/web3.js" "^1.44.1"
     axios "^0.27.2"
     web3 "^1.7.3"
 

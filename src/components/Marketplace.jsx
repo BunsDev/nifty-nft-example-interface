@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import nftdaoSDK from 'nftdao-sdk';
+import Nifty from 'nftdao-sdk';
 import { Web3Context } from '../web3';
 import Token from './Token';
 
 const shortenAddress = (address) => address && `${address.substring(0, 5)}...${address.substring(address.length - 4, address.length)}`;
 
-let nftdao;
+let nifty;
 
 const chains = [
   { chainId: '', name: 'All' },
@@ -14,6 +14,7 @@ const chains = [
   { chainId: 56, name: 'BNB' },
   { chainId: 43114, name: 'Avalanche' },
   { chainId: 1285, name: 'Moonriver' },
+  { chainId: 4, name: 'rinkeby' },
 ];
 
 const sortOptions = [
@@ -49,23 +50,31 @@ const Marketplace = () => {
       options.search = searchFilter;
     }
 
-    nftdao = nftdaoSDK({ marketplaceId: 'etoro' });
+    nifty = new Nifty({ marketplace: 'test' });
 
-    nftdao.api.tokens.getAll(
-      options,
-    ).then((res) => {
+    nifty.getNFTs(options).then((res) => {
       setTokens(res.data);
-    });
+    })
+      .catch((e) => {
+        console.log('e', e);
+      });
   }, [searchFilter, chainFilter, sort]);
 
-  const buy = (orderId) => {
-    nftdao.api.orders.get(orderId).then(async (res) => {
-      await nftdao.setWeb3(web3, 'EVM');
-      nftdao.transactions.setStatusListener((status) => console.log(status));
+  const sell = async (token) => {
+    nifty.initWallet(web3, 'EVM');
+    nifty.setStatusListener(
+      (status) => console.log(status),
+    );
+    await nifty.sell(token, '0.01');
+  };
 
-      await nftdao.transactions.buy(res.data).then((tx) => {
-        console.log('Bought!');
-      }).catch((e) => { console.log(e.message); });
+  const buy = (orderId) => {
+    nifty.getListing(orderId).then(async (res) => {
+      nifty.initWallet(web3, 'EVM');
+      nifty.setStatusListener(
+        (status) => console.log(status),
+      );
+      await nifty.buy(res.data);
     });
   };
 
@@ -99,7 +108,13 @@ const Marketplace = () => {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {tokens.map((token) => <Token {...token} onBuy={() => buy(token.orderId)} />)}
+          {tokens.map((token) => (
+            <Token
+              {...token}
+              onBuy={() => buy(token.orderId)}
+              onSell={() => sell(token)}
+            />
+          ))}
         </div>
 
       </div>
