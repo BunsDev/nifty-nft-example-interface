@@ -64,7 +64,7 @@ const Marketplace = () => {
       options.search = searchFilter;
     }
 
-    nifty = new Nifty({ marketplace: 'test' });
+    nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
     nifty.getNFTs(options).then((res) => { setTokens(res.data); })
       .catch((e) => {
@@ -73,7 +73,7 @@ const Marketplace = () => {
   }, [searchFilter, chainFilter, sort]);
 
   const list = async (token, price) => {
-    nifty.initWallet(web3, Nifty.evmTypes.EVM);
+    nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );
@@ -82,11 +82,13 @@ const Marketplace = () => {
 
   const buy = (orderId) => {
     nifty.getListing(orderId).then(async (res) => {
-      nifty.initWallet(web3, Nifty.evmTypes.EVM);
+      nifty.initWallet(web3, Nifty.networkTypes.EVM);
       nifty.setStatusListener(
         (status) => console.log(status),
       );
-      await nifty.buy(res.data);
+      nifty.buy(res.data).then(tx => {
+        console.log('Bought!');
+      }).catch(e => alert(e));
     });
   };
 

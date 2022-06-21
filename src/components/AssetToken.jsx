@@ -16,7 +16,7 @@ const AssetToken = () => {
   const { web3 } = useContext(Web3Context);
 
   useEffect(() => {
-    nifty = new Nifty({ marketplace: 'test' });
+    nifty = new Nifty({ marketplace: 'test', env: Nifty.envs.TESTNET });
     nifty.getNFT(contractAddress, tokenID, chainId).then((res) => {
       setToken(res.data);
     });
@@ -24,7 +24,7 @@ const AssetToken = () => {
 
   const buy = (orderId) => {
     nifty.getListing(orderId).then(async (res) => {
-      nifty.initWallet(web3, Nifty.evmTypes.EVM);
+      nifty.initWallet(web3, Nifty.networkTypes.EVM);
       nifty.setStatusListener(
         (status) => console.log(status),
       );
@@ -37,7 +37,7 @@ const AssetToken = () => {
   };
 
   const list = async (token, price) => {
-    nifty.initWallet(web3, Nifty.evmTypes.EVM);
+    nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );

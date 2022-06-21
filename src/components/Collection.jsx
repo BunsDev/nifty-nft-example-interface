@@ -8,7 +8,7 @@ import { Web3Context } from '../web3';
 
 const shortenAddress = (address) => address && `${address.substring(0, 5)}...${address.substring(address.length - 4, address.length)}`;
 
-let nftdao;
+let nifty;
 
 const sortOptions = [
   { value: 'listed_desc', label: 'Recently Listed' },
@@ -40,9 +40,9 @@ const Collection = () => {
       options.search = searchFilter;
     }
 
-    nftdao = Nifty({ marketplaceId: 'etoro' });
+    nifty = Nifty({ marketplaceId: 'etoro' });
 
-    nftdao.api.tokens.getAll(options).then((res) => {
+    nifty.api.tokens.getAll(options).then((res) => {
       setTokens(res.data);
     });
   }, [searchFilter, sort]);
