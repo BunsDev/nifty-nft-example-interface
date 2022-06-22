@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Nifty from 'nifty-protocol';
 
 const Token = ({
-  contract, name, thumb, price, chainId, onBuy, tokenID, onList,
+  contract, name, thumb, price, chainId, tokenID,
 }) => {
   const chain = Nifty.utils.findChainById(chainId);
   return (
@@ -38,10 +38,6 @@ const Token = ({
         <p>{price}</p>
         <p>{chain.name}</p>
       </Link>
-      <div>
-        <button type="button" onClick={onBuy}>Buy</button>
-        <button type="button" onClick={onList}>List</button>
-      </div>
     </div>
   );
 };

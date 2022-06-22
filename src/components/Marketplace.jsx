@@ -27,10 +27,8 @@ const sortOptions = [
 ];
 
 const Marketplace = () => {
+  const queryParams = new URLSearchParams(window.location.search);
   const [tokens, setTokens] = useState([]);
-  const [chainFilter, setChainFilter] = useState('');
-  const [searchFilter, setSearchFilter] = useState('');
-  const [sort, setSort] = useState('listed_desc');
 
   const {
     contractAddress,
@@ -48,29 +46,28 @@ const Marketplace = () => {
 
   useEffect(() => {
     const options = {
-      sort,
+      sort            : queryParams.get('sort') || 'listed_desc',
       contractAddress,
       connectedChainId: chainId,
       address         : userAddress,
     };
 
-    if (sort) {
-      options.sort = sort;
+    if (queryParams.get('chain')) {
+      options.chains = [queryParams.get('chain')];
     }
-    if (chainFilter) {
-      options.chains = [chainFilter];
-    }
-    if (searchFilter) {
-      options.search = searchFilter;
+    if (queryParams.get('search')) {
+      options.search = queryParams.get('search');
     }
 
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
-    nifty.getNFTs(options).then((res) => { setTokens(res.data); })
+    nifty.getNFTs(options).then((res) => {
+      setTokens(res.data);
+    })
       .catch((e) => {
         console.log('e', e);
       });
-  }, [searchFilter, chainFilter, sort]);
+  }, []);
 
   const list = async (token, price) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
@@ -86,9 +83,9 @@ const Marketplace = () => {
       nifty.setStatusListener(
         (status) => console.log(status),
       );
-      nifty.buy(res.data).then(tx => {
+      nifty.buy(res.data).then((tx) => {
         console.log('Bought!');
-      }).catch(e => alert(e));
+      }).catch((e) => alert(e));
     });
   };
 
@@ -107,9 +104,8 @@ const Marketplace = () => {
           <form name="marketplace" id="marketplace">
             <select
               id="chains"
-              name="chainList"
+              name="chain"
               form="marketplace"
-              onChange={(e) => setChainFilter(e.target.value)}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             >
               {chains.map((chain) => (
@@ -119,9 +115,8 @@ const Marketplace = () => {
 
             <select
               id="sort"
-              name="sort options"
+              name="sort"
               form="marketplace"
-              onChange={(e) => setSort(e.target.value)}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             >
               {sortOptions.map((option) => (
@@ -130,10 +125,13 @@ const Marketplace = () => {
             </select>
 
             <input
-              onChange={(e) => setSearchFilter(e.target.value)}
+              id="search"
+              name="search"
               placeholder="Search"
+              form="marketplace"
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
+            <button type="submit">Search</button>
           </form>
 
           {contractAddress && (
