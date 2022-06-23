@@ -28,7 +28,7 @@ const sortOptions = [
 
 const Marketplace = () => {
   const queryParams = new URLSearchParams(window.location.search);
-  const [tokens, setTokens] = useState([]);
+  const [NFTs, setNFTs] = useState([]);
 
   const {
     wallet,
@@ -43,7 +43,7 @@ const Marketplace = () => {
       sort            : queryParams.get('sort') || 'listed_desc',
       contractAddress : queryParams.get('contractAddress'),
       connectedChainId: queryParams.get('chainId'),
-      address         : queryParams.get('userAddress').toLowerCase(),
+      address         : queryParams.get('userAddress')?.toLowerCase(),
     };
 
     if (queryParams.get('chain')) {
@@ -56,19 +56,19 @@ const Marketplace = () => {
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
     nifty.getNFTs(options).then((res) => {
-      setTokens(res.data);
+      setNFTs(res.data);
     })
       .catch((e) => {
         console.log('e', e);
       });
   }, []);
 
-  const list = async (token, price) => {
+  const list = async (nft, price) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );
-    await nifty.list(token, '0.01');
+    await nifty.list(nft, '0.01');
   };
 
   const buy = (orderId) => {
@@ -144,11 +144,11 @@ const Marketplace = () => {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {tokens.map((token) => (
+          {NFTs.map((NFT) => (
             <Token
-              {...token}
-              onBuy={() => buy(token.orderId)}
-              onList={() => list(token)}
+              {...NFT}
+              onBuy={() => buy(NFT.orderId)}
+              onList={() => list(NFT)}
             />
           ))}
         </div>
