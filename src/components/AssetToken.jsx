@@ -10,17 +10,35 @@ import { Web3Context } from '../web3';
 let nifty;
 
 const AssetToken = () => {
-  const { contractAddress, chainId, tokenID } = useParams();
-  const [token, setToken] = useState([]);
-  const [canList, setCanList] = useState(false);
+  const { contractAddress, chainId, NFTId } = useParams();
+  const [NFT, setNFT] = useState([]);
+  const [NFTData, setNFTNFTData] = useState([]);
+  const [userActions, setUserActions] = useState({});
+  const [price, setPrice] = useState(0);
   const { web3 } = useContext(Web3Context);
 
   useEffect(() => {
-    nifty = new Nifty({ marketplace: 'test', env: Nifty.envs.TESTNET });
-    nifty.getNFT(contractAddress, tokenID, chainId).then((res) => {
-      setToken(res.data);
+    nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
+
+    nifty.getNFT(contractAddress, NFTId, chainId).then((res) => {
+      setNFT(res.data);
+      nifty.getNFTData(res.data).then((nftRes) => {
+        setNFTNFTData(nftRes.data);
+      });
     });
   }, []);
+
+  useEffect(() => {
+    if (web3 && NFTData && setUserActions !== {}) {
+      nifty.initWallet(web3, Nifty.networkTypes.EVM);
+      nifty.getUserAvailableMethods(NFTData.listings, NFT).then((res) => {
+        setUserActions(res);
+      })
+        .catch((e) => {
+          console.log('e', e);
+        });
+    }
+  }, [web3, NFTData.listings]);
 
   const buy = (orderId) => {
     nifty.getListing(orderId).then(async (res) => {
@@ -36,58 +54,72 @@ const AssetToken = () => {
     console.log('offer');
   };
 
-  const list = async (token, price) => {
+  const list = async (NFT) => {
+    console.log('enter');
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );
-    await nifty.list(token, '0.01');
+    await nifty.sell(NFT, price);
   };
 
   return (
     <div>
       {
-        token && (
+        NFT && (
           <>
-            <img src={token.preview} alt={token.name} style={{ maxWidth: '300px', maxHeight: '300px' }} />
+            <img src={NFT.preview} alt={NFT.name} style={{ maxWidth: '300px', maxHeight: '300px' }} />
             <Link to={`/collection/${chainId}/${contractAddress}`}>
-              <h1>{token.contractName}</h1>
+              <h1>{NFT.contractName}</h1>
             </Link>
-            <h2>{token.name}</h2>
+            <h2>{NFT.name}</h2>
             <h3>
               Price:
-              {token.price}
+              {NFT.price}
             </h3>
             <h5>
               Description:
-              {token.description}
+              {NFT.description}
             </h5>
 
             <div>
-              {canList && <button onClick={list} type="button">List</button>}
-              <button onClick={buy} type="button">Buy</button>
-              <button onClick={offer} type="button">Offer</button>
+
+              {userActions?.canSell
+              && (
+              <>
+                <input
+                  id="price"
+                  name="price"
+                  placeholder="price"
+                  form="nft price"
+                  style={{ height: '30px', width: '200px', marginRight: '10px' }}
+                  onChange={(e) => { setPrice(e.target.value); }}
+                />
+                <button onClick={() => list(NFT)} type="button">List</button>
+              </>
+              )}
+              {userActions?.canBuy && <button onClick={buy(NFT)} type="button">Buy</button>}
             </div>
 
             <div>
-              {token.attributes && (
+              {NFT.attributes && (
                 <>
                   <h2>Attributes:</h2>
                   {
-                    token.attributes.map((attribute) => (
+                    NFT.attributes.map((attribute) => (
                       <div>
                         {attribute.trait_type}
                         :
                         {attribute.value}
                       </div>
                     ))
-                }
+                  }
                 </>
               )}
             </div>
           </>
         )
-}
+      }
     </div>
   );
 };
