@@ -2,18 +2,19 @@ import './style.css';
 import {
   BrowserRouter as Router,
   Switch,
+  HashRouter,
   Route,
 } from 'react-router-dom';
 import Marketplace from './components/Marketplace';
 import AssetToken from './components/AssetToken';
 
 const App = () => (
-  <Router>
+  <HashRouter>
     <Switch>
       <Route path="/user/:chainId/:userAddress">
         <Marketplace />
       </Route>
-      <Route path="/token/:chainId/:contractAddress/:tokenID">
+      <Route path="/token/:chainId/:contractAddress/:NFTId">
         <AssetToken />
       </Route>
       <Route path="/collection/:chainId/:contractAddress">
@@ -23,7 +24,7 @@ const App = () => (
         <Marketplace />
       </Route>
     </Switch>
-  </Router>
+  </HashRouter>
 );
 
 export default App;
