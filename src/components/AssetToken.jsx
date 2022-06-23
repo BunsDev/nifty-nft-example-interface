@@ -55,7 +55,6 @@ const AssetToken = () => {
   };
 
   const list = async (NFT) => {
-    console.log('enter');
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),

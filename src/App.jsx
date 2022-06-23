@@ -9,7 +9,7 @@ import Marketplace from './components/Marketplace';
 import AssetToken from './components/AssetToken';
 
 const App = () => (
-  <HashRouter>
+  <Router>
     <Switch>
       <Route path="/user/:chainId/:userAddress">
         <Marketplace />
@@ -24,7 +24,7 @@ const App = () => (
         <Marketplace />
       </Route>
     </Switch>
-  </HashRouter>
+  </Router>
 );
 
 export default App;
