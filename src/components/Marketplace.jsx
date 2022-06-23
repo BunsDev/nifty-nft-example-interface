@@ -29,23 +29,28 @@ const sortOptions = [
 const Marketplace = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const [NFTs, setNFTs] = useState([]);
+  const [isRequiered, setIsRequired] = useState(false);
 
   const {
+    provider,
+    logout,
     wallet,
     web3,
-    provider,
     connectWeb3,
-    logout,
   } = useContext(Web3Context);
 
   useEffect(() => {
     const options = {
-      sort            : queryParams.get('sort') || 'listed_desc',
-      contractAddress : queryParams.get('contractAddress'),
-      connectedChainId: queryParams.get('chainId'),
-      address         : queryParams.get('userAddress')?.toLowerCase(),
+      sort           : queryParams.get('sort') || 'listed_desc',
+      contractAddress: queryParams.get('contractAddress'),
     };
 
+    if (queryParams.get('userAddress')) {
+      options.address = queryParams.get('userAddress').toLowerCase();
+    }
+    if (queryParams.get('chainId')) {
+      options.connectedChainId = queryParams.get('chainId');
+    }
     if (queryParams.get('chain')) {
       options.chains = [queryParams.get('chain')];
     }
@@ -125,7 +130,37 @@ const Marketplace = () => {
               form="marketplace"
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
-            <button type="submit">Search</button>
+
+            <input
+              id="userAddress"
+              name="userAddress"
+              placeholder="User Address"
+              form="marketplace"
+              onChange={(e) => { setIsRequired(!!e.target.value); }}
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
+
+            <input
+              id="contractAddress"
+              name="contractAddress"
+              placeholder="Contract Address"
+              form="marketplace"
+              onChange={(e) => { setIsRequired(!!e.target.value); }}
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
+            {
+            isRequiered && (
+            <input
+              id="chainId"
+              name="chainId"
+              required={isRequiered}
+              placeholder="chainId"
+              form="marketplace"
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
+            )
+            }
+            <button type="submit">submit</button>
           </form>
 
           {queryParams.get('contractAddress') && (
