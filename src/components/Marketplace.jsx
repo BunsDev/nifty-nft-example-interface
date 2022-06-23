@@ -31,12 +31,6 @@ const Marketplace = () => {
   const [tokens, setTokens] = useState([]);
 
   const {
-    contractAddress,
-    chainId,
-    userAddress,
-  } = useParams();
-
-  const {
     wallet,
     web3,
     provider,
@@ -47,9 +41,9 @@ const Marketplace = () => {
   useEffect(() => {
     const options = {
       sort            : queryParams.get('sort') || 'listed_desc',
-      contractAddress,
-      connectedChainId: chainId,
-      address         : userAddress,
+      contractAddress : queryParams.get('contractAddress'),
+      connectedChainId: queryParams.get('chainId'),
+      address         : queryParams.get('userAddress').toLowerCase(),
     };
 
     if (queryParams.get('chain')) {
@@ -134,17 +128,17 @@ const Marketplace = () => {
             <button type="submit">Search</button>
           </form>
 
-          {contractAddress && (
+          {queryParams.get('contractAddress') && (
             <>
-              <p>Contact Address: </p>
-              <p>{contractAddress}</p>
+              <p style={{ margin: '0' }}>Contact Address: </p>
+              <p style={{ margin: '0' }}>{queryParams.get('contractAddress')}</p>
             </>
           )}
 
-          {userAddress && (
+          {queryParams.get('userAddress') && (
             <>
-              <p>User Address :</p>
-              <p>{userAddress}</p>
+              <p style={{ margin: '0' }}>User Address :</p>
+              <p style={{ margin: '0' }}>{queryParams.get('userAddress')}</p>
             </>
           )}
         </div>
