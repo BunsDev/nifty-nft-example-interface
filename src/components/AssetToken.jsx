@@ -13,7 +13,7 @@ const AssetToken = () => {
   const { contractAddress, chainId, NFTId } = useParams();
   const [NFT, setNFT] = useState([]);
   const [NFTData, setNFTNFTData] = useState([]);
-  const [userActions, setUserActions] = useState({});
+  const [userActions, setUserActions] = useState(null);
   const [price, setPrice] = useState(0);
   const { web3 } = useContext(Web3Context);
 
@@ -29,7 +29,7 @@ const AssetToken = () => {
   }, []);
 
   useEffect(() => {
-    if (web3 && NFTData && setUserActions !== {}) {
+    if (web3 && NFTData && !userActions) {
       nifty.initWallet(web3, Nifty.networkTypes.EVM);
       nifty.getUserAvailableMethods(NFTData.listings, NFT).then((res) => {
         setUserActions(res);
