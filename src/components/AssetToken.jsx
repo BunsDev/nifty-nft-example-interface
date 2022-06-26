@@ -54,12 +54,14 @@ const AssetToken = () => {
     console.log('offer');
   };
 
-  const sell = async (NFT) => {
+  const sell = async (item) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener(
       (status) => console.log(status),
     );
-    const orderRes = await nifty.sell(NFT, price);
+    const expirationTime = 86400; // 1 day
+
+    const orderRes = await nifty.sell({ item, price, expirationTime });
   };
 
   return (
@@ -84,19 +86,19 @@ const AssetToken = () => {
             <div>
 
               {userActions?.canSell
-              && (
-              <>
-                <input
-                  id="price"
-                  name="price"
-                  placeholder="price"
-                  form="nft price"
-                  style={{ height: '30px', width: '200px', marginRight: '10px' }}
-                  onChange={(e) => { setPrice(e.target.value); }}
-                />
-                <button onClick={() => sell(NFT)} type="button">List</button>
-              </>
-              )}
+                && (
+                  <>
+                    <input
+                      id="price"
+                      name="price"
+                      placeholder="price"
+                      form="nft price"
+                      style={{ height: '30px', width: '200px', marginRight: '10px' }}
+                      onChange={(e) => { setPrice(e.target.value); }}
+                    />
+                    <button onClick={() => sell(NFT)} type="button">List</button>
+                  </>
+                )}
               {userActions?.canBuy && <button onClick={() => buy(NFT.orderId)} type="button">Buy</button>}
             </div>
 
