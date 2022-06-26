@@ -105,6 +105,7 @@ const Marketplace = () => {
               id="chains"
               name="chain"
               form="marketplace"
+              defaultValue={queryParams.get('chain') || 'All'}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             >
               {chains.map((chain) => (
@@ -116,6 +117,7 @@ const Marketplace = () => {
               id="sort"
               name="sort"
               form="marketplace"
+              defaultValue={queryParams.get('sort') || 'listed_desc'}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             >
               {sortOptions.map((option) => (
@@ -127,6 +129,7 @@ const Marketplace = () => {
               id="search"
               name="search"
               placeholder="Search"
+              defaultValue={queryParams.get('search')}
               form="marketplace"
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
@@ -135,6 +138,7 @@ const Marketplace = () => {
               id="userAddress"
               name="userAddress"
               placeholder="User Address"
+              defaultValue={queryParams.get('userAddress')}
               form="marketplace"
               onChange={(e) => { setIsRequired(!!e.target.value); }}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
@@ -144,16 +148,18 @@ const Marketplace = () => {
               id="contractAddress"
               name="contractAddress"
               placeholder="Contract Address"
+              defaultValue={queryParams.get('contractAddress')}
               form="marketplace"
               onChange={(e) => { setIsRequired(!!e.target.value); }}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
             {
-            isRequiered && (
+            (isRequiered || queryParams.get('chainId')) && (
             <input
               id="chainId"
               name="chainId"
               required={isRequiered}
+              defaultValue={queryParams.get('chainId')}
               placeholder="chainId"
               form="marketplace"
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
@@ -162,20 +168,6 @@ const Marketplace = () => {
             }
             <button type="submit">submit</button>
           </form>
-
-          {queryParams.get('contractAddress') && (
-            <>
-              <p style={{ margin: '0' }}>Contact Address: </p>
-              <p style={{ margin: '0' }}>{queryParams.get('contractAddress')}</p>
-            </>
-          )}
-
-          {queryParams.get('userAddress') && (
-            <>
-              <p style={{ margin: '0' }}>User Address :</p>
-              <p style={{ margin: '0' }}>{queryParams.get('userAddress')}</p>
-            </>
-          )}
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
