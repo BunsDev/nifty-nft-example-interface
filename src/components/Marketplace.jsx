@@ -70,22 +70,25 @@ const Marketplace = () => {
 
   const list = async (nft, price) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
-    nifty.setStatusListener(
-      (status) => console.log(status),
-    );
-    await nifty.list(nft, '0.01');
+    nifty.setStatusListener((status) => console.log(status));
+
+    try {
+      await nifty.list(nft, price);
+    } catch (e) {
+      console.error('e', e);
+    }
   };
 
-  const buy = (orderId) => {
-    nifty.getListing(orderId).then(async (res) => {
-      nifty.initWallet(web3, Nifty.networkTypes.EVM);
-      nifty.setStatusListener(
-        (status) => console.log(status),
-      );
-      nifty.buy(res.data).then((tx) => {
-        console.log('Bought!');
-      }).catch((e) => alert(e));
-    });
+  const buy = async (orderId) => {
+    const listingRes = await nifty.getListing(orderId);
+    nifty.initWallet(web3, Nifty.networkTypes.EVM);
+    nifty.setStatusListener((status) => console.log(status));
+
+    try {
+      await nifty.buy(listingRes.data);
+    } catch (e) {
+      console.error('e', e);
+    }
   };
 
   return (
@@ -101,6 +104,7 @@ const Marketplace = () => {
       <div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <form name="marketplace" id="marketplace">
+
             <select
               id="chains"
               name="chain"
@@ -153,6 +157,7 @@ const Marketplace = () => {
               onChange={(e) => { setIsRequired(!!e.target.value); }}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
+
             {
             (isRequiered || queryParams.get('chainId')) && (
             <input

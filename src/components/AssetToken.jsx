@@ -40,14 +40,16 @@ const AssetToken = () => {
     }
   }, [web3, NFTData.listings]);
 
-  const buy = (orderId) => {
-    nifty.getListing(orderId).then(async (res) => {
-      nifty.initWallet(web3, Nifty.networkTypes.EVM);
-      nifty.setStatusListener(
-        (status) => console.log(status),
-      );
-      await nifty.buy(res.data);
-    });
+  const buy = async (orderId) => {
+    const listingRes = await nifty.getListing(orderId);
+    nifty.initWallet(web3, Nifty.networkTypes.EVM);
+    nifty.setStatusListener((status) => console.log(status));
+
+    try {
+      await nifty.buy(listingRes.data);
+    } catch (e) {
+      console.error('e', e);
+    }
   };
 
   const offer = () => {
@@ -56,12 +58,15 @@ const AssetToken = () => {
 
   const sell = async (item) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
-    nifty.setStatusListener(
-      (status) => console.log(status),
-    );
+    nifty.setStatusListener((status) => console.log(status));
+
     const expirationTime = 86400; // 1 day
 
-    const orderRes = await nifty.sell({ item, price, expirationTime });
+    try {
+      await nifty.sell(item, price, expirationTime);
+    } catch (e) {
+      console.error('e', e);
+    }
   };
 
   return (
