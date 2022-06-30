@@ -9,12 +9,12 @@ let nifty;
 
 const chains = [
   { chainId: '', name: 'All' },
-  { chainId: 1, name: 'Ethereum' },
-  { chainId: 137, name: 'Polygon' },
-  { chainId: 56, name: 'BNB' },
-  { chainId: 43114, name: 'Avalanche' },
-  { chainId: 1285, name: 'Moonriver' },
-  { chainId: 4, name: 'rinkeby' },
+  { chainId: '1', name: 'Ethereum' },
+  { chainId: '137', name: 'Polygon' },
+  { chainId: '56', name: 'BNB' },
+  { chainId: '43114', name: 'Avalanche' },
+  { chainId: '1285', name: 'Moonriver' },
+  { chainId: '4', name: 'Rinkeby' },
 ];
 
 const sortOptions = [
@@ -29,13 +29,13 @@ const sortOptions = [
 const Marketplace = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const [nfts, setNfts] = useState([]);
-  const [isRequiered, setIsRequired] = useState(false);
+  const [isChainIdRequired, setIsChainIdRequired] = useState(false);
 
   const {
     provider,
     logout,
-    wallet,
     web3,
+    wallet,
     connectWeb3,
   } = useContext(Web3Context);
 
@@ -60,7 +60,8 @@ const Marketplace = () => {
 
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
-    nifty.getNFTs(options).then((res) => { setNfts(res); })
+    nifty.getNFTs(options)
+      .then((res) => setNfts(res))
       .catch((e) => {
         console.log('e', e);
       });
@@ -69,17 +70,17 @@ const Marketplace = () => {
   return (
     <div>
       <header>
-        {!wallet ? (
-          <button type="button" onClick={connectWeb3}>
-            Connect to MetaMask
-          </button>
-        ) : shortenAddress(wallet.address)}
+        {wallet ? shortenAddress(wallet.address)
+          : (
+            <button type="button" onClick={connectWeb3}>
+              Connect to MetaMask
+            </button>
+          )}
       </header>
 
       <div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <form name="marketplace" id="marketplace">
-
             <select
               id="chains"
               name="chain"
@@ -119,7 +120,7 @@ const Marketplace = () => {
               placeholder="User Address"
               defaultValue={queryParams.get('userAddress')}
               form="marketplace"
-              onChange={(e) => { setIsRequired(!!e.target.value); }}
+              onChange={(e) => setIsChainIdRequired(!!e.target.value)}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
 
@@ -129,16 +130,16 @@ const Marketplace = () => {
               placeholder="Contract Address"
               defaultValue={queryParams.get('contractAddress')}
               form="marketplace"
-              onChange={(e) => { setIsRequired(!!e.target.value); }}
+              onChange={(e) => setIsChainIdRequired(!!e.target.value)}
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
 
             {
-            (isRequiered || queryParams.get('chainId')) && (
+            (isChainIdRequired || queryParams.get('chainId')) && (
             <input
               id="chainId"
               name="chainId"
-              required={isRequiered}
+              required={isChainIdRequired}
               defaultValue={queryParams.get('chainId')}
               placeholder="chainId"
               form="marketplace"
@@ -152,7 +153,9 @@ const Marketplace = () => {
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {nfts.map((nft) => (
+            // nft preview
             <Token
+              key={nft.id}
               {...nft}
             />
           ))}
