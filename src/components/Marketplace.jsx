@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import Nifty from 'nifty-protocol';
 import { useParams } from 'react-router-dom';
 import { Web3Context } from '../web3';
-import Token from './Token';
+import NftPreview from './NftPreview';
 
 const shortenAddress = (address) => address && `${address.substring(0, 5)}...${address.substring(address.length - 4, address.length)}`;
 let nifty;
@@ -154,7 +154,7 @@ const Marketplace = () => {
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {nfts.map((nft) => (
             // nft preview
-            <Token
+            <NftPreview
               key={nft.id}
               {...nft}
             />
