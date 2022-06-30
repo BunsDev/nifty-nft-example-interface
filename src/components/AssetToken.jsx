@@ -10,60 +10,68 @@ import { Web3Context } from '../web3';
 let nifty;
 
 const AssetToken = () => {
-  const { contractAddress, chainId, NFTId } = useParams();
-  const [NFT, setNFT] = useState([]);
-  const [NFTData, setNFTNFTData] = useState([]);
-  const [userActions, setUserActions] = useState(null);
-  const [price, setPrice] = useState(0);
+  const { contractAddress, chainId, NftId } = useParams();
   const { web3 } = useContext(Web3Context);
 
-  useEffect(() => {
-    nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
+  const [nft, setNft] = useState([]);
+  const [NftData, setNftData] = useState([]);
+  const [userActions, setUserActions] = useState(null);
+  const [paymentMethods, setPaymentMethods] = useState(null);
+  const [price, setPrice] = useState(0);
 
-    nifty.getNFT(contractAddress, NFTId, chainId).then((res) => {
-      setNFT(res.data);
-      nifty.getNFTData(res.data).then((nftRes) => {
-        setNFTNFTData(nftRes.data);
+  useEffect(() => {
+    nifty = new Nifty({ key: 'test', env: Nifty.envs.LOCAL });
+
+    nifty.getNFT(contractAddress, NftId, chainId).then((res) => {
+      setNft(res);
+      nifty.getNFTData(res).then((nftRes) => {
+        setNftData(nftRes);
       });
     });
   }, []);
 
   useEffect(() => {
-    if (web3 && NFTData && !userActions) {
+    if (web3 && NftData && !userActions) {
       nifty.initWallet(web3, Nifty.networkTypes.EVM);
-      nifty.getUserAvailableMethods(NFTData.listings, NFT).then((res) => {
+      nifty.getUserAvailableMethods(NftData.listings, nft).then((res) => {
         setUserActions(res);
+
+        //  if user is owner of the NFT
+        if (res.canSell) {
+          const availableMethodsRes = nifty.getAvailablePaymentMethods(chainId);
+          setPaymentMethods(availableMethodsRes);
+        }
       })
         .catch((e) => {
           console.log('e', e);
         });
     }
-  }, [web3, NFTData.listings]);
+  }, [web3, NftData.listings]);
 
-  const buy = async (orderId) => {
-    const listingRes = await nifty.getListing(orderId);
+  const buy = async (nftToBuy, isExternalOrder) => {
+    // external roder can be looksrare / opensea / rarible
+    const listingRes = await nifty.getListing(nftToBuy.externalOrderId, isExternalOrder);
+
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener((status) => console.log(status));
 
     try {
-      await nifty.buy(listingRes.data);
+      const res = await nifty.buy(listingRes.data, isExternalOrder);
+      console.log('res', res);
     } catch (e) {
       console.error('e', e);
     }
   };
 
-  const offer = () => {
-    console.log('offer');
-  };
-
-  const sell = async (item) => {
+  const sell = async (nftToSell) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener((status) => console.log(status));
 
     const expirationTime = 86400; // 1 day
 
     try {
-      await nifty.sell(item, price, expirationTime);
+      const res = await nifty.sell(nftToSell, price, expirationTime);
+      console.log('res', res);
     } catch (e) {
       console.error('e', e);
     }
@@ -72,24 +80,38 @@ const AssetToken = () => {
   return (
     <div>
       {
-        NFT && (
+        nft && (
           <>
-            <img src={NFT.preview} alt={NFT.name} style={{ maxWidth: '300px', maxHeight: '300px' }} />
+            <img src={nft.preview} alt={nft.name} style={{ maxWidth: '300px', maxHeight: '300px' }} />
             <Link to={`/collection/${chainId}/${contractAddress}`}>
-              <h1>{NFT.contractName}</h1>
+              <h1>{nft.contractName}</h1>
             </Link>
-            <h2>{NFT.name}</h2>
-            <h3>
-              Price:
-              {NFT.price}
-            </h3>
+            <h2>{nft.name}</h2>
+
+            {
+              nft.price && (
+                <h3>
+                  Price:
+                  {nft.price}
+                </h3>
+              )
+            }
+
+            {
+              nft.externalOrderPrice && (
+                <h3>
+                  External Order Price:
+                  {nft.externalOrderPrice}
+                </h3>
+              )
+            }
+
             <h5>
               Description:
-              {NFT.description}
+              {nft.description}
             </h5>
 
             <div>
-
               {userActions?.canSell
                 && (
                   <>
@@ -101,18 +123,19 @@ const AssetToken = () => {
                       style={{ height: '30px', width: '200px', marginRight: '10px' }}
                       onChange={(e) => { setPrice(e.target.value); }}
                     />
-                    <button onClick={() => sell(NFT)} type="button">List</button>
+                    <button onClick={() => sell(nft)} type="button">List</button>
                   </>
                 )}
-              {userActions?.canBuy && <button onClick={() => buy(NFT.orderId)} type="button">Buy</button>}
+              {userActions?.canBuy && <button onClick={() => buy(nft, false)} type="button">Buy</button>}
+              {nft.externalOrderPrice && <button onClick={() => buy(nft, true)} type="button">External Buy</button>}
             </div>
 
             <div>
-              {NFT.attributes && (
+              {nft.attributes && (
                 <>
                   <h2>Attributes:</h2>
                   {
-                    NFT.attributes.map((attribute) => (
+                    nft.attributes.map((attribute) => (
                       <div>
                         {attribute.trait_type}
                         :

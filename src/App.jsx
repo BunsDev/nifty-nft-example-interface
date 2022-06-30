@@ -14,7 +14,7 @@ const App = () => (
       <Route path="/user/:chainId/:userAddress">
         <Marketplace />
       </Route>
-      <Route path="/token/:chainId/:contractAddress/:NFTId">
+      <Route path="/token/:chainId/:contractAddress/:NftId">
         <AssetToken />
       </Route>
       <Route path="/collection/:chainId/:contractAddress">

@@ -28,7 +28,7 @@ const sortOptions = [
 
 const Marketplace = () => {
   const queryParams = new URLSearchParams(window.location.search);
-  const [NFTs, setNFTs] = useState([]);
+  const [nfts, setNfts] = useState([]);
   const [isRequiered, setIsRequired] = useState(false);
 
   const {
@@ -60,36 +60,11 @@ const Marketplace = () => {
 
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
-    nifty.getNFTs(options).then((res) => {
-      setNFTs(res.data);
-    })
+    nifty.getNFTs(options).then((res) => { setNfts(res); })
       .catch((e) => {
         console.log('e', e);
       });
   }, []);
-
-  const list = async (nft, price) => {
-    nifty.initWallet(web3, Nifty.networkTypes.EVM);
-    nifty.setStatusListener((status) => console.log(status));
-
-    try {
-      await nifty.list(nft, price);
-    } catch (e) {
-      console.error('e', e);
-    }
-  };
-
-  const buy = async (orderId) => {
-    const listingRes = await nifty.getListing(orderId);
-    nifty.initWallet(web3, Nifty.networkTypes.EVM);
-    nifty.setStatusListener((status) => console.log(status));
-
-    try {
-      await nifty.buy(listingRes.data);
-    } catch (e) {
-      console.error('e', e);
-    }
-  };
 
   return (
     <div>
@@ -176,11 +151,9 @@ const Marketplace = () => {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {NFTs.map((NFT) => (
+          {nfts.map((nft) => (
             <Token
-              {...NFT}
-              onBuy={() => buy(NFT.orderId)}
-              onList={() => list(NFT)}
+              {...nft}
             />
           ))}
         </div>
