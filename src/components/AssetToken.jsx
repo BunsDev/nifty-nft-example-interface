@@ -18,9 +18,10 @@ const AssetToken = () => {
   const [userAvailableMethods, setUserAvailableMethods] = useState(null);
   const [paymentMethods, setPaymentMethods] = useState(null);
   const [price, setPrice] = useState(0);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
-    nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
+    nifty = new Nifty({ key: 'test', env: Nifty.envs.LOCAL });
 
     nifty.getNFT(contractAddress, nftId, chainId)
       .then((res) => {
@@ -43,6 +44,7 @@ const AssetToken = () => {
           if (res.canSell) {
             const availableMethodsRes = nifty.getAvailablePaymentMethods(chainId);
             setPaymentMethods(availableMethodsRes);
+            setSelectedPaymentMethod(availableMethodsRes[0].address);
           }
         })
           .catch((e) => {
@@ -61,7 +63,7 @@ const AssetToken = () => {
     const listingRes = await nifty.getListing(orderId, isExternalOrder);
 
     try {
-      const res = await nifty.buy(listingRes.data, isExternalOrder);
+      const res = await nifty.buy(listingRes, isExternalOrder);
       console.log('res', res);
     } catch (e) {
       console.error('e', e);
@@ -75,7 +77,7 @@ const AssetToken = () => {
     const expirationTime = 86400; // in 1 day
 
     try {
-      const res = await nifty.sell(nftToSell, price, expirationTime);
+      const res = await nifty.sell(nftToSell, price, expirationTime, selectedPaymentMethod);
       console.log('res', res);
     } catch (e) {
       console.error('e', e);
@@ -130,9 +132,10 @@ const AssetToken = () => {
                   <select
                     defaultValue={paymentMethods[0].value}
                     style={{ height: '30px', width: '200px', marginRight: '10px' }}
+                    onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                   >
                     {paymentMethods.map((option) => (
-                      <option key={option.key} value={option.value}>{option.value}</option>
+                      <option key={option.address} value={option.address}>{option.value}</option>
                     ))}
                   </select>
                 )
