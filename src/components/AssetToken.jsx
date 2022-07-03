@@ -21,7 +21,7 @@ const AssetToken = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
-    nifty = new Nifty({ key: 'test', env: Nifty.envs.LOCAL });
+    nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
 
     nifty.getNFT(contractAddress, nftId, chainId)
       .then((res) => {
@@ -70,14 +70,14 @@ const AssetToken = () => {
     }
   };
 
-  const sell = async (nftToSell) => {
+  const list = async (nftToSell) => {
     nifty.initWallet(web3, Nifty.networkTypes.EVM);
     nifty.setStatusListener((status) => console.log(status));
 
     const expirationTime = 86400; // in 1 day
 
     try {
-      const res = await nifty.sell(nftToSell, price, expirationTime, selectedPaymentMethod);
+      const res = await nifty.list(nftToSell, price, expirationTime, selectedPaymentMethod);
       console.log('res', res);
     } catch (e) {
       console.error('e', e);
@@ -140,7 +140,7 @@ const AssetToken = () => {
                   </select>
                 )
               }
-              <button onClick={() => sell(nft)} type="button">List</button>
+              <button onClick={() => list(nft)} type="button">List</button>
             </>
           )}
 

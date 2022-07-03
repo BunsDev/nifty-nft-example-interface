@@ -153,7 +153,6 @@ const Marketplace = () => {
 
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {nfts.map((nft) => (
-            // nft preview
             <NftPreview
               key={nft.id}
               {...nft}
