@@ -1,9 +1,5 @@
-import {
-  Link,
-  useParams,
-} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Nifty from 'nifty-protocol';
-
 import { useContext, useEffect, useState } from 'react';
 import { Web3Context } from '../web3';
 
@@ -36,7 +32,7 @@ const AssetToken = () => {
   useEffect(() => {
     if (!userAvailableMethods) {
       if (web3 && nftData) {
-        nifty.initWallet(web3, Nifty.networkTypes.EVM);
+        nifty.initWallet(Nifty.networkTypes.EVM, web3);
         nifty.getUserAvailableMethods(nftData.listings, nft).then((res) => {
           setUserAvailableMethods(res);
 
