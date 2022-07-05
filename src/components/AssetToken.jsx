@@ -85,6 +85,21 @@ const AssetToken = () => {
     }
   };
 
+  const offer = async (e, nftToSell) => {
+    e.preventDefault();
+
+    nifty.initWallet(Nifty.networkTypes.EVM, web3);
+    nifty.setStatusListener((status) => console.log(status));
+
+    const expirationTime = 86400; // in 1 day
+
+    try {
+      nifty.offer(nftToSell, e.target.price.value, expirationTime);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const cancelOrder = async (nftToCancel) => {
     nifty.initWallet(Nifty.networkTypes.EVM, web3);
     nifty.setStatusListener((status) => console.log(status));
@@ -156,7 +171,20 @@ const AssetToken = () => {
               <button type="submit">List</button>
             </form>
           )}
+        {
+          userAvailableMethods?.canOffer
+          && (
+            <form onSubmit={(e) => { offer(e, nft); }}>
+              <input
+                name="price"
+                placeholder="price"
+                style={{ height: '30px', width: '200px', marginRight: '10px' }}
+              />
+              <button type="submit">offer</button>
+            </form>
 
+          )
+        }
         {userAvailableMethods?.canBuy && <button onClick={() => buy(nft, false)} type="button">Buy</button>}
         {userAvailableMethods?.canCancel && <button onClick={() => cancelOrder(nft)} type="button">Cancel Order</button>}
         {!!nft.externalOrderPrice && <button onClick={() => buy(nft, true)} type="button">External Buy</button>}
