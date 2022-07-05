@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import Nifty from 'nifty-protocol';
-import { useParams } from 'react-router-dom';
 import { Web3Context } from '../web3';
 import NftPreview from './NftPreview';
 
@@ -56,6 +55,12 @@ const Marketplace = () => {
     }
     if (queryParams.get('search')) {
       options.search = queryParams.get('search');
+    }
+    if (queryParams.get('limit')) {
+      options.limit = queryParams.get('limit');
+    }
+    if (queryParams.get('skip')) {
+      options.skip = queryParams.get('skip');
     }
 
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
@@ -131,6 +136,22 @@ const Marketplace = () => {
               defaultValue={queryParams.get('contractAddress')}
               form="marketplace"
               onChange={(e) => setIsChainIdRequired(!!e.target.value)}
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
+            <input
+              id="limit"
+              name="limit"
+              placeholder="limit (min 30 max 100)"
+              defaultValue={queryParams.get('limit')}
+              form="marketplace"
+              style={{ height: '30px', width: '200px', marginRight: '10px' }}
+            />
+            <input
+              id="skip"
+              name="skip"
+              placeholder="skip"
+              defaultValue={queryParams.get('skip')}
+              form="marketplace"
               style={{ height: '30px', width: '200px', marginRight: '10px' }}
             />
 
