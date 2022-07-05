@@ -13,8 +13,6 @@ const AssetToken = () => {
   const [nftData, setNftData] = useState({});
   const [userAvailableMethods, setUserAvailableMethods] = useState(null);
   const [paymentMethods, setPaymentMethods] = useState(null);
-  const [price, setPrice] = useState(0);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
     nifty = new Nifty({ key: 'test', env: Nifty.envs.TESTNET });
@@ -40,7 +38,6 @@ const AssetToken = () => {
           if (res.canSell) {
             const availableMethodsRes = nifty.getAvailablePaymentMethods(chainId);
             setPaymentMethods(availableMethodsRes);
-            setSelectedPaymentMethod(availableMethodsRes[0].address);
           }
         })
           .catch((e) => {
@@ -66,14 +63,22 @@ const AssetToken = () => {
     }
   };
 
-  const list = async (nftToSell) => {
+  const list = async (e, nftToSell) => {
+    e.preventDefault();
+
     nifty.initWallet(Nifty.networkTypes.EVM, web3);
     nifty.setStatusListener((status) => console.log(status));
 
     const expirationTime = 86400; // in 1 day
 
     try {
-      const res = await nifty.list(nftToSell, price, expirationTime, selectedPaymentMethod);
+      const res = await nifty.list(
+        nftToSell,
+        e.target.price.value,
+        expirationTime,
+        e.target.paymentMethod.value,
+      );
+
       console.log('res', res);
     } catch (e) {
       console.error('e', e);
@@ -128,22 +133,19 @@ const AssetToken = () => {
       <div>
         {userAvailableMethods?.canSell
           && (
-            <>
+            <form onSubmit={(e) => { list(e, nft); }}>
               <input
-                id="price"
                 name="price"
                 placeholder="price"
-                form="nft price"
                 style={{ height: '30px', width: '200px', marginRight: '10px' }}
-                onChange={(e) => { setPrice(e.target.value); }}
               />
 
               {
                 paymentMethods && (
                   <select
                     defaultValue={paymentMethods[0].value}
+                    name="paymentMethod"
                     style={{ height: '30px', width: '200px', marginRight: '10px' }}
-                    onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                   >
                     {paymentMethods.map((option) => (
                       <option key={option.address} value={option.address}>{option.value}</option>
@@ -151,8 +153,8 @@ const AssetToken = () => {
                   </select>
                 )
               }
-              <button onClick={() => list(nft)} type="button">List</button>
-            </>
+              <button type="submit">List</button>
+            </form>
           )}
 
         {userAvailableMethods?.canBuy && <button onClick={() => buy(nft, false)} type="button">Buy</button>}
