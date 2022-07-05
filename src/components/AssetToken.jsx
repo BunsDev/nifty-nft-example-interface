@@ -79,6 +79,21 @@ const AssetToken = () => {
       console.error('e', e);
     }
   };
+
+  const cancelOrder = async (nftToCancel) => {
+    nifty.initWallet(Nifty.networkTypes.EVM, web3);
+    nifty.setStatusListener((status) => console.log(status));
+
+    const listingRes = await nifty.getListing(nftToCancel.orderId);
+
+    try {
+      const res = await nifty.cancelOrder(listingRes);
+      console.log('res', res);
+    } catch (e) {
+      console.error('e', e);
+    }
+  };
+
   if (!nft) return <></>;
 
   return (
@@ -141,6 +156,7 @@ const AssetToken = () => {
           )}
 
         {userAvailableMethods?.canBuy && <button onClick={() => buy(nft, false)} type="button">Buy</button>}
+        {userAvailableMethods?.canCancel && <button onClick={() => cancelOrder(nft)} type="button">Cancel Order</button>}
         {!!nft.externalOrderPrice && <button onClick={() => buy(nft, true)} type="button">External Buy</button>}
       </div>
 
