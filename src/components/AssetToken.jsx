@@ -50,6 +50,8 @@ const AssetToken = () => {
   const buy = async (nftToBuy, isExternalOrder) => {
     nifty.initWallet(Nifty.networkTypes.EVM, web3);
     nifty.setStatusListener((status) => console.log(status));
+    nifty.addListener((tnxHash) => console.log('tnxHash', tnxHash), 'tnxHash');
+    nifty.addListener(() => console.log('TransactionConfirmed'), 'TransactionConfirmed');
 
     // external orders can be looksrare / opensea / rarible
     const orderId = isExternalOrder ? nftToBuy.externalOrderId : nftToBuy.orderId;
@@ -68,6 +70,7 @@ const AssetToken = () => {
 
     nifty.initWallet(Nifty.networkTypes.EVM, web3);
     nifty.setStatusListener((status) => console.log(status));
+    nifty.addListener(() => console.log('signature'), 'signature');
 
     const expirationTime = 86400; // in 1 day
 
