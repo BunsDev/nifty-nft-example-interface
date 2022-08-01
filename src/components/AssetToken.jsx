@@ -7,7 +7,7 @@ let nifty;
 
 const AssetToken = () => {
   const { contractAddress, chainId, nftId } = useParams();
-  const { provider } = useContext(Web3Context);
+  const { provider, wallet, connectWeb3 } = useContext(Web3Context);
 
   const [nft, setNft] = useState({});
   const [userAvailableMethods, setUserAvailableMethods] = useState(null);
@@ -99,6 +99,15 @@ const AssetToken = () => {
 
   return (
     <div>
+      {!wallet
+            && (
+            <header>
+              <button type="button" onClick={connectWeb3}>
+                Connect to MetaMask
+              </button>
+            </header>
+            )}
+
       <img src={nft.preview} alt={nft.name} style={{ maxWidth: '300px', maxHeight: '300px' }} />
       <h1>{nft.contractName}</h1>
       <h2>{nft.name}</h2>
