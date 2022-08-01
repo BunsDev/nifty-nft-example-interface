@@ -31,9 +31,6 @@ const Marketplace = () => {
   const [isChainIdRequired, setIsChainIdRequired] = useState(false);
 
   const {
-    provider,
-    logout,
-    web3,
     wallet,
     connectWeb3,
   } = useContext(Web3Context);
