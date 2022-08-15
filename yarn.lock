@@ -1859,9 +1859,9 @@
     rimraf "^3.0.2"
 
 "@opensea/seaport-js@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@opensea/seaport-js/-/seaport-js-1.0.4.tgz#d5fb303e105a30aca3367106fb2b8e00c6f02192"
-  integrity sha512-Icz2ML00iBO+2gUjcr2ydtwpGBwUWNQECJ6T/KTrbdlWrKAnJ9RSGF/LZl8JajTn4w97PiJF9liPWh+NP/R5aA==
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@opensea/seaport-js/-/seaport-js-1.0.5.tgz#f48ebf5e3bc6ff5627502616598b401c6eaf352a"
+  integrity sha512-WgK3Grdqf5PEQWMlSFiSFaL/j8vlJ3feSjn+frFEO0QH2MuqwlFBRUGwqK4l09o5ZtZDRRTMafgrYC6BOgBY4A==
   dependencies:
     "@0xsequence/multicall" "^0.39.0"
     ethers "^5.6.7"
@@ -8778,10 +8778,10 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-nifty-protocol@^1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/nifty-protocol/-/nifty-protocol-1.0.13.tgz#c41e60c61b34c03f11a3a1f3a6b9be72e598b9b8"
-  integrity sha512-kF7oRGj7UgLN8MDhWoAMJZIO2wiRC5zeHSZnljCgRzdlxaob9nEdwAdrguvyCCA0RK/nRyQU5pB0pTJvgihKdg==
+nifty-protocol@^1.0.23:
+  version "1.0.23"
+  resolved "https://registry.yarnpkg.com/nifty-protocol/-/nifty-protocol-1.0.23.tgz#a7a9c2daaaf9c9cd1bb81c1587a9f723f6bf9d51"
+  integrity sha512-r+ED6YkoffNa6qAASiHkZhn69rZDFMbjteXSczAxOmvFyB1VFbCoXNdy3wXBxwL4GBrNa+woZxmYFvQzPbfFEg==
   dependencies:
     "@opensea/seaport-js" "^1.0.4"
     "@solana/web3.js" "^1.35.1"
